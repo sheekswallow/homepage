@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "posthtml-expressions": {
+      locals: { 
+        title: "sheekSwallow",
+        posts: 3
+      }
+    }
+  }
+}
