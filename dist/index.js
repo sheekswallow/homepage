@@ -104,73 +104,74 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   // Override the current require with this new one
   return newRequire;
-})({"index.js":[function(require,module,exports) {
-/* global fetch */
-function visit() {
-  var vc = document.getElementById("visitCount");
-  vc.innerHTML = 777;
-  var u = 'https://learn-gracegamara.c9users.io:8082/.netlify/functions/test1';
-  console.log('visit', u);
-  fetch(u, {
-    method: "GET",
-    mode: "cors",
-    cache: "no-cache",
-    credentials: "same-origin",
-    redirect: "follow",
-    // manual, *follow, error
-    referrer: "no-referrer" // no-referrer, *client
+})({"node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-  }).then(function (res) {
-    return res.json();
-  }).then(function (res) {
-    vc.innerHTML = 'res.status';
-  }).catch(function (error) {
-    return console.error('ErrorX:', error);
-  });
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
 }
 
-function createFolder() {
-  var cf = document.getElementById("createFolderInput");
-  var cfm = document.getElementById("createFolderMsg");
-  var data = {
-    foldername: cf.value
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
   };
-  fetch('/dropbox/createfolder', {
-    method: "POST",
-    // *GET, POST, PUT, DELETE, etc.
-    mode: "cors",
-    // no-cors, cors, *same-origin
-    cache: "no-cache",
-    // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: "same-origin",
-    // include, same-origin, *omit
-    headers: {
-      "Content-Type": "application/json; charset=utf-8" //"Content-Type": "application/x-www-form-urlencoded",
 
-    },
-    redirect: "follow",
-    // manual, *follow, error
-    referrer: "no-referrer",
-    // no-referrer, *client
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
-
-  }).then(function (res) {
-    return res.json();
-  }).then(function (res) {
-    cfm.innerHTML = res.status;
-  }).catch(function (error) {
-    return console.error('Error:', error);
-  });
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
 }
 
-(function () {
-  visit();
-  document.getElementById("createFolderSubmit").addEventListener("click", function (e) {
-    e.preventDefault();
-    createFolder();
-  });
-})();
-},{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -339,5 +340,4 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], null)
-//# sourceMappingURL=/homepage.e31bb0bc.map
+},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
